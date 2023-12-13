@@ -19,11 +19,24 @@ class MyApp extends StatelessWidget {
       home: FutureBuilder(
         future: _getTokenFromSharedPreferences(),
         builder: (context, AsyncSnapshot<String?> snapshot) {
-          if (snapshot.connectionState == ConnectionState.waiting) {
-            return const CircularProgressIndicator();
+          if (snapshot.connectionState != ConnectionState.done) {
+            return const Scaffold(
+              body: Center(
+                child: CircularProgressIndicator(),
+              ),
+            );
+          }
+          if (snapshot.hasError) {
+            return Scaffold(
+              body: Center(
+                child: Text('Error: ${snapshot.error}'),
+              ),
+            );
+          }
+          if (snapshot.hasData && snapshot.data != null) {
+            return HomePage();
           } else {
-            final bool isLoggedIn = snapshot.hasData && snapshot.data != null;
-            return isLoggedIn ? HomePage() : const LoginPage();
+            return const LoginPage();
           }
         },
       ),
@@ -31,7 +44,12 @@ class MyApp extends StatelessWidget {
   }
 
   Future<String?> _getTokenFromSharedPreferences() async {
-    final SharedPreferences prefs = await SharedPreferences.getInstance();
-    return prefs.getString('jwt_token');
+    try {
+      final SharedPreferences prefs = await SharedPreferences.getInstance();
+      return prefs.getString('jwt_token');
+    } catch (e) {
+      print('Error fetching shared preferences: $e');
+      return null;
+    }
   }
 }
