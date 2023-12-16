@@ -1,5 +1,5 @@
-import 'package:assignmet/screen/authentication/login.dart';
 import 'package:assignmet/screen/home/home.dart';
+import 'package:assignmet/screen/startpage/startpage.dart';
 import 'package:flutter/material.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import "package:get/get.dart";
@@ -36,7 +36,7 @@ class MyApp extends StatelessWidget {
           if (snapshot.hasData && snapshot.data != null) {
             return HomePage();
           } else {
-            return const LoginPage();
+            return const GetStarted();
           }
         },
       ),
